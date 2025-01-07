@@ -1,6 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
 /**
  * 16-bit And gate:
  * for i = 0, ..., 15:
@@ -11,5 +8,6 @@ CHIP And16 {
     OUT out[16];
 
     PARTS:
-    //// Replace this comment with your code.
+    Nand16(a=a, b=b, out=aNandB);
+    Not16(in=aNandB, out=out);
 }

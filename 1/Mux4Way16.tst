@@ -1,7 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-
 load Mux4Way16.hdl,
 output-file Mux4Way16.out,
 compare-to Mux4Way16.cmp,

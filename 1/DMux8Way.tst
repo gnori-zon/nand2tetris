@@ -1,7 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-
 load DMux8Way.hdl,
 output-file DMux8Way.out,
 compare-to DMux8Way.cmp,
