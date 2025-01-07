@@ -1,6 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
 /** 
  * Multiplexor:
  * if (sel = 0) out = a, else out = b
@@ -10,5 +7,8 @@ CHIP Mux {
     OUT out;
 
     PARTS:
-    //// Replace this comment with your code.
+    Not(in=sel, out=notSel);
+    And(a=a, b=notSel, out=notSelAndA);
+    And(a=b, b=sel, out=selAndB);
+    Or(a=notSelAndA, b=selAndB, out=out);
 }

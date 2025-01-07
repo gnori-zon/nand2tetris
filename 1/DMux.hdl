@@ -1,6 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
 /**
  * Demultiplexor:
  * [a, b] = [in, 0] if sel = 0
@@ -11,5 +8,7 @@ CHIP DMux {
     OUT a, b;
 
     PARTS:
-    //// Replace this comment with your code.
+    Not(in=sel, out=notSel);
+    And(a=in, b=notSel, out=a);
+    And(a=in, b=sel, out=b);
 }
