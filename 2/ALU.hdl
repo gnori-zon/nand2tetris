@@ -54,5 +54,5 @@ CHIP ALU {
     Or8Way(in=leftOut, out=leftHasNotZero);
     Or8Way(in=rightOut, out=rightHasNotZero);
     Or(a=rightHasNotZero, b=leftHasNotZero, out=hasNotZero);
-    Not(in=hasNotZero, out=zr);    
+    Not(in=hasNotZero, out=zr);
 }
