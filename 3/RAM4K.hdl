@@ -1,6 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
 /**
  * Memory of 4K 16-bit registers.
  * If load is asserted, the value of the register selected by
@@ -12,5 +9,14 @@ CHIP RAM4K {
     OUT out[16];
 
     PARTS:
-    //// Replace this comment with your code.
+    DMux8Way(in=load, sel=address[0..2], a=addrSector1, b=addrSector2, c=addrSector3, d=addrSector4, e=addrSector5, f=addrSector6, g=addrSector7, h=addrSector8);
+    RAM512(in=in, load=addrSector1, address=address[3..11], out=storedAddrSector1);
+    RAM512(in=in, load=addrSector2, address=address[3..11], out=storedAddrSector2);
+    RAM512(in=in, load=addrSector3, address=address[3..11], out=storedAddrSector3);
+    RAM512(in=in, load=addrSector4, address=address[3..11], out=storedAddrSector4);
+    RAM512(in=in, load=addrSector5, address=address[3..11], out=storedAddrSector5);
+    RAM512(in=in, load=addrSector6, address=address[3..11], out=storedAddrSector6);
+    RAM512(in=in, load=addrSector7, address=address[3..11], out=storedAddrSector7);
+    RAM512(in=in, load=addrSector8, address=address[3..11], out=storedAddrSector8);
+    Mux8Way16(a=storedAddrSector1, b=storedAddrSector2, c=storedAddrSector3, d=storedAddrSector4, e=storedAddrSector5, f=storedAddrSector6, g=storedAddrSector7, h=storedAddrSector8, sel=address[0..2], out=out);
 }

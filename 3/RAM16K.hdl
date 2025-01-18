@@ -1,6 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
 /**
  * Memory of 16K 16-bit registers.
  * If load is asserted, the value of the register selected by
@@ -12,5 +9,10 @@ CHIP RAM16K {
     OUT out[16];
 
     PARTS:
-    //// Replace this comment with your code.
+    DMux4Way(in=load, sel=address[0..1], a=addrSector1, b=addrSector2, c=addrSector3, d=addrSector4);
+    RAM4K(in=in, load=addrSector1, address=address[2..13], out=storedAddrSector1);
+    RAM4K(in=in, load=addrSector2, address=address[2..13], out=storedAddrSector2);
+    RAM4K(in=in, load=addrSector3, address=address[2..13], out=storedAddrSector3);
+    RAM4K(in=in, load=addrSector4, address=address[2..13], out=storedAddrSector4);
+    Mux4Way16(a=storedAddrSector1, b=storedAddrSector2, c=storedAddrSector3, d=storedAddrSector4, sel=address[0..1], out=out);
 }
