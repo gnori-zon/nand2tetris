@@ -1,7 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-
 // Tests the Fill.hack program in the CPU emulator.
 
 load Fill.hack;
