@@ -1,7 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-
 // Tests the Mult program, designed to compute R2 = R0 * R1.
 // Tests the program by having it multiply several sets of
 // R0 and R1 values.
