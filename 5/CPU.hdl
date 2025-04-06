@@ -1,6 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
 /**
  * The Hack Central Processing unit (CPU).
  * Parses the binary code in the instruction input and executes it according to the
@@ -31,5 +28,37 @@ CHIP CPU {
         pc[15];          // address of next instruction
 
     PARTS:
-	//// Replace this comment with your code.
+
+    Not(in=instruction[15], out=Ainstruction);
+    Not(in=Ainstruction, out=Cinstruction);
+
+    And(a=Cinstruction, b=instruction[5], out=ALUtoA);
+    Mux16(a=instruction, b=ALUout, sel=ALUtoA, out=registerAin);
+
+    Or(a=Ainstruction, b=ALUtoA, out=loadA);
+    ARegister(in=registerAin, load=loadA, out=registerAout);
+    Mux16(a=registerAout, b=inM, sel=instruction[12], out=registerAmuxMout);
+
+    And(a=Cinstruction, b=instruction[4], out=loadD);
+    DRegister(in=ALUout, load=loadD, out=Dout);
+
+    ALU(x=Dout, y=registerAmuxMout, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUout, zr=isZeroOut, ng=isNegativeOut);
+
+    Or16(a=false, b=registerAout, out[0..14]=addressM);
+    Or16(a=false, b=ALUout, out=outM);
+    And(a=Cinstruction, b=instruction[3], out=writeM);
+
+    Or(a=isZeroOut, b=isNegativeOut, out=zeroOrNegative);
+    Not(in=zeroOrNegative, out=isPositive);
+
+    And(a=isPositive, b=instruction[0], out=jumpGt);
+    And(a=isZeroOut, b=instruction[1], out=jumpEq);
+    And(a=isNegativeOut, b=instruction[2], out=jumpLt);
+    Or(a=jumpEq, b=jumpLt, out=jumpLe);
+    Or(a=jumpLe, b=jumpGt, out=jumpToA);
+
+    And(a=Cinstruction, b=jumpToA, out=PCload);
+    Not(in=PCload, out=PCinc);
+
+    PC(in=registerAout, inc=PCinc, load=PCload, reset=reset, out[0..14]=pc);
 }

@@ -1,7 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-
 // Tests the Computer chip by having it execute the program Rect.hack.
 // The program draws a rectangle of width 16 pixels and length RAM[0]
 // at the top left corner of the screen.
