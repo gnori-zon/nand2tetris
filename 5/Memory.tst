@@ -1,8 +1,4 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-
-// Tests the Memory chip by inputting values to selected addresses, 
+// Tests the Memory chip by inputting values to selected addresses,
 // verifying that these addresses were indeed written to, and verifying  
 // that other addresses were not accessed by mistake. In particular, we 
 // focus on probing the registers in addresses 'lower RAM', 'upper RAM',
