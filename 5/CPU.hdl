@@ -29,36 +29,44 @@ CHIP CPU {
 
     PARTS:
 
-    Not(in=instruction[15], out=Ainstruction);
-    Not(in=Ainstruction, out=Cinstruction);
+    // instruction= o xx a cccccc ddd jjj
+    // |-------------------------------------|
+    // |15 14 13 12 11 10 9 8 7 6 5 4 3 2 1 0| - idx
+    // | o  x  x  a  c  c c c c c d d d j j j| - type
+    // |-------------------------------------|
+    // if o is 1 then is A-instruction else is C-instruction
+    // a - is 2 operand for ALU if 0 then use M or A
+    // c - is operation bits for ALU
+    // ddd - is bit for target write [A-reg, D-reg, M], when M is RAM[A]
+    // jjj - is bit for jump condition [JLT, JEQ, JGT]
 
-    And(a=Cinstruction, b=instruction[5], out=ALUtoA);
-    Mux16(a=instruction, b=ALUout, sel=ALUtoA, out=registerAin);
+    Not(in=instruction[15], out=isAinstruction);
+    Not(in=isAinstruction, out=isCinstruction);
 
-    Or(a=Ainstruction, b=ALUtoA, out=loadA);
-    ARegister(in=registerAin, load=loadA, out=registerAout);
-    Mux16(a=registerAout, b=inM, sel=instruction[12], out=registerAmuxMout);
+    And(a=isCinstruction, b=instruction[5], out=ALUtoA);
+    Mux16(a=instruction, b=ALUout, sel=ALUtoA, out=aRegisterIn);
+    Or(a=isAinstruction, b=ALUtoA, out=aRegisterLoad);
+    ARegister(in=aRegisterIn, load=aRegisterLoad, out=aRegisterOut);
+    Mux16(a=aRegisterOut, b=inM, sel=instruction[12], out=aRegisterOutMuxInM);
 
-    And(a=Cinstruction, b=instruction[4], out=loadD);
-    DRegister(in=ALUout, load=loadD, out=Dout);
+    And(a=isCinstruction, b=instruction[4], out=dRegisterLoad);
+    DRegister(in=ALUout, load=dRegisterLoad, out=dRegisterOut);
 
-    ALU(x=Dout, y=registerAmuxMout, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUout, zr=isZeroOut, ng=isNegativeOut);
+    ALU(x=dRegisterOut, y=aRegisterOutMuxInM, zx=instruction[11], nx=instruction[10], zy=instruction[9], ny=instruction[8], f=instruction[7], no=instruction[6], out=ALUout, zr=isZeroALUout, ng=isNegativeALUout);
 
-    Or16(a=false, b=registerAout, out[0..14]=addressM);
+    Or16(a=false, b=aRegisterOut, out[0..14]=addressM);
     Or16(a=false, b=ALUout, out=outM);
-    And(a=Cinstruction, b=instruction[3], out=writeM);
+    And(a=isCinstruction, b=instruction[3], out=writeM);
 
-    Or(a=isZeroOut, b=isNegativeOut, out=zeroOrNegative);
-    Not(in=zeroOrNegative, out=isPositive);
-
-    And(a=isPositive, b=instruction[0], out=jumpGt);
-    And(a=isZeroOut, b=instruction[1], out=jumpEq);
-    And(a=isNegativeOut, b=instruction[2], out=jumpLt);
-    Or(a=jumpEq, b=jumpLt, out=jumpLe);
-    Or(a=jumpLe, b=jumpGt, out=jumpToA);
-
-    And(a=Cinstruction, b=jumpToA, out=PCload);
+    Or(a=isZeroALUout, b=isNegativeALUout, out=isZeroOrNegativeALUout);
+    Not(in=isZeroOrNegativeALUout, out=isPositiveALUout);
+    And(a=isNegativeALUout, b=instruction[2], out=needJLT);
+    And(a=isZeroALUout, b=instruction[1], out=needJEQ;
+    And(a=isPositiveALUout, b=instruction[0], out=needJGT);
+    Or(a=needJLT, b=needJEQ, out=needJLE);
+    Or(a=needJLE, b=needJGT, out=needAnyJumpToA);
+    And(a=isCinstruction, b=needAnyJumpToA, out=PCload);
     Not(in=PCload, out=PCinc);
 
-    PC(in=registerAout, inc=PCinc, load=PCload, reset=reset, out[0..14]=pc);
+    PC(in=aRegisterOut, inc=PCinc, load=PCload, reset=reset, out[0..14]=pc);
 }
