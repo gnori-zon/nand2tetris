@@ -11,21 +11,23 @@ type SymbolsTable struct {
 	maxAddressToGenerate     int
 }
 
-func NewSymbolsTable(
-	initialAddressToGenerate int,
-	maxAddressToGenerate int,
-) *SymbolsTable {
+func New16BitsSymbolsTable() *SymbolsTable {
 	symbolsTable := &SymbolsTable{
 		data:                     make(map[string]int),
-		currentAddressToGenerate: initialAddressToGenerate,
-		maxAddressToGenerate:     maxAddressToGenerate,
+		currentAddressToGenerate: 0,
+		maxAddressToGenerate:     Max15bitValue,
 	}
 	symbolsTable.initDefaultSymbols()
 	return symbolsTable
 }
 
+func (t *SymbolsTable) Get(name string) (int, bool) {
+	address, ok := t.data[name]
+	return address, ok
+}
+
 func (t *SymbolsTable) Add(name string, address int) error {
-	if existAddress, ok := t.data[name]; ok {
+	if existAddress, ok := t.Get(name); ok {
 		return errors.New(fmt.Sprintf("name already has address: %d", existAddress))
 	}
 	if address < 0 {
