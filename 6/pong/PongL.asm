@@ -1,7 +1,3 @@
-// This file is part of www.nand2tetris.org
-// and the book "The Elements of Computing Systems"
-// by Nisan and Schocken, MIT Press.
-
 // Symbol-less version of the Pong.asm program.
 // Designed for testing the basic version of the assembler.
 
