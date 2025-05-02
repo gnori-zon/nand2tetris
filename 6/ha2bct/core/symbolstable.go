@@ -14,7 +14,7 @@ type SymbolsTable struct {
 func New16BitsSymbolsTable() *SymbolsTable {
 	symbolsTable := &SymbolsTable{
 		data:                     make(map[string]int),
-		currentAddressToGenerate: 0,
+		currentAddressToGenerate: 16,
 		maxAddressToGenerate:     Max15bitValue,
 	}
 	symbolsTable.initDefaultSymbols()

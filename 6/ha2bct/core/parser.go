@@ -111,7 +111,7 @@ func extractAInstruction(row string) (models.HackAssemblerAInstruction, bool) {
 	return nil, false
 }
 
-var aInstructionRegex = regexp.MustCompile(`^@[A-Za-z_\-0-9]+$`)
+var aInstructionRegex = regexp.MustCompile(`^@[A-Za-z_$.\-0-9]+$`)
 
 var numericRegex = regexp.MustCompile(`^[0-9]+$`)
 

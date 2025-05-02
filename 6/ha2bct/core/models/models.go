@@ -71,7 +71,7 @@ type HackAssemblerNumericAInstruction struct {
 }
 
 func (aInstruction HackAssemblerNumericAInstruction) Type() HackAssemblerElementType {
-	return CInstruction
+	return AInstruction
 }
 
 func (aInstruction HackAssemblerNumericAInstruction) SubType() HackAssemblerAInstructionType {
