@@ -25,6 +25,8 @@ var destByString = map[string]Dest{
 }
 
 func NewDest(value string) (Dest, bool) {
-	dest, ok := destByString[value]
-	return dest, ok
+	if dest, ok := destByString[value]; ok {
+		return dest, true
+	}
+	return -1, false
 }

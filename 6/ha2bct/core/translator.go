@@ -61,7 +61,7 @@ func (translator HackAssemblerAInstructionTo16BitTranslator) Translate(element m
 		if errValidate := Validate15BitAddress(address); errValidate != nil {
 			return "", errValidate
 		}
-		return translator.binaryCodeProvider.EncodeAInstruction(address), nil
+		return translator.binaryCodeProvider.EncodeAInstruction(address)
 	}
 	return "", errors.New("element is not a-instruction, type: " + element.Type().ToString())
 }

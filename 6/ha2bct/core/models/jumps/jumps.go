@@ -25,6 +25,8 @@ var jumpByString = map[string]Jump{
 }
 
 func NewJump(value string) (Jump, bool) {
-	jump, ok := jumpByString[value]
-	return jump, ok
+	if jump, ok := jumpByString[value]; ok {
+		return jump, true
+	}
+	return -1, false
 }

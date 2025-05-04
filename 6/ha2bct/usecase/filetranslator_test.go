@@ -1,11 +1,13 @@
 package usecase
 
 import (
+	"bufio"
 	"fmt"
+	"os"
 	"testing"
 )
 
-var sliceAssemblerCode = []string{
+var fileAssemblerCode = []string{
 	" // Computes R2 = max(R0, R1)  (R0,R1,R2 refer to RAM[0],RAM[1],RAM[2])   	",
 	" // Usage: Before executing, put two values in R0 and R1.                 	",
 	"                                                                          	",
@@ -33,7 +35,7 @@ var sliceAssemblerCode = []string{
 	" 0;JMP																		",
 }
 
-var sliceExpectedBinaryCode = []string{
+var fileExpectedBinaryCode = []string{
 	"0000000000000000",
 	"1111110000010000",
 	"0000000000000001",
@@ -52,22 +54,41 @@ var sliceExpectedBinaryCode = []string{
 	"1110101010000111",
 }
 
-func TestHackAssemblerTo16BitSliceTranslator_TranslateAll(t *testing.T) {
-	translator := NewHackAssemblerTo16BitSliceTranslator()
-	binaryCode, translateErr := translator.TranslateAll(sliceAssemblerCode)
+func TestHackAssemblerTo16BitFileTranslator_TranslateAllTranslateAll(t *testing.T) {
+	translator := NewHackAssemblerTo16BitFileTranslator()
+	file, err := createTempFileWithAssembler()
+	if err != nil {
+		t.Errorf("Bad create temp file: %s", err)
+	}
+	defer file.Close()
+	outputFileName, translateErr := translator.TranslateAll(file.Name())
 
-	needCheckEach := true
 	errs := make([]string, 0)
 	if translateErr != nil {
 		errs = append(errs, fmt.Sprintf("Error is not expected but has %d", translateErr))
 	}
-	if len(sliceExpectedBinaryCode) != len(binaryCode) {
-		needCheckEach = false
-		errs = append(errs, fmt.Sprintf("Expected binary code length: %d But actual: %d", len(sliceExpectedBinaryCode), len(binaryCode)))
+	fileWithBinaryCodes, err := os.Open(outputFileName)
+	defer func() {
+		fileWithBinaryCodes.Close()
+		os.Remove(outputFileName)
+	}()
+	if err != nil {
+		t.Errorf("Bad open output file: %s", err)
 	}
-	for i := 0; needCheckEach && i < len(binaryCode); i++ {
-		if sliceExpectedBinaryCode[i] != binaryCode[i] {
-			errs = append(errs, fmt.Sprintf("Expected [%d] binary code: %s But actual: %s", i, sliceExpectedBinaryCode[i], binaryCode[i]))
+	scanner := bufio.NewScanner(fileWithBinaryCodes)
+	for i := 0; i < len(fileExpectedBinaryCode); i++ {
+		if !scanner.Scan() {
+			t.Errorf("Bad read at position: %d in file", i)
+		}
+		translatedByteCode := scanner.Text()
+		if fileExpectedBinaryCode[i] != translatedByteCode {
+			errs = append(errs, fmt.Sprintf("Expected [%d] binary code: %s But actual: %s", i, fileExpectedBinaryCode[i], translatedByteCode))
+		}
+	}
+	for scanner.Scan() {
+		nextRow := scanner.Text()
+		if nextRow != "" {
+			t.Errorf("Expected empty text but got %s", nextRow)
 		}
 	}
 	if len(errs) > 0 {
@@ -75,4 +96,20 @@ func TestHackAssemblerTo16BitSliceTranslator_TranslateAll(t *testing.T) {
 			t.Error(err)
 		}
 	}
+}
+
+func createTempFileWithAssembler() (*os.File, error) {
+	file, err := os.CreateTemp("", "")
+	if err != nil {
+		return nil, err
+	}
+	writer := bufio.NewWriter(file)
+	for _, assemblerRow := range fileAssemblerCode {
+		_, err := writer.WriteString(assemblerRow + "\n")
+		if err != nil {
+			return nil, err
+		}
+	}
+	writer.Flush()
+	return file, nil
 }

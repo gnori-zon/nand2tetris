@@ -33,7 +33,7 @@ func (t *SymbolsTable) Add(name string, address int) error {
 	if address < 0 {
 		return errors.New("address must be positive")
 	}
-	if address >= t.maxAddressToGenerate {
+	if address > t.maxAddressToGenerate {
 		return errors.New("new generated address exceed max address")
 	}
 	t.data[name] = address
@@ -44,7 +44,7 @@ func (t *SymbolsTable) AddGenerated(name string) (int, error) {
 	if existAddress, ok := t.data[name]; ok {
 		return -1, errors.New(fmt.Sprintf("name already has address: %d", existAddress))
 	}
-	if t.currentAddressToGenerate >= t.maxAddressToGenerate {
+	if t.currentAddressToGenerate > t.maxAddressToGenerate {
 		return -1, errors.New("new generated address exceed max address")
 	}
 	t.data[name] = t.currentAddressToGenerate

@@ -65,6 +65,8 @@ var computeByString = map[string]Compute{
 }
 
 func NewCompute(value string) (Compute, bool) {
-	compute, ok := computeByString[value]
-	return compute, ok
+	if compute, ok := computeByString[value]; ok {
+		return compute, true
+	}
+	return -1, false
 }

@@ -8,7 +8,7 @@ import (
 )
 
 type BinaryCodeProvider interface {
-	EncodeAInstruction(address int) string
+	EncodeAInstruction(address int) (string, error)
 	EncodeCInstruction(dest dests.Dest, compute computes.Compute, jump jumps.Jump) string
 }
 
@@ -21,8 +21,11 @@ func NewBinaryCode16BitsProvider() BinaryCodeProvider {
 
 var addressTo15Bits = "%015b"
 
-func (p *BinaryCode16BitsProvider) EncodeAInstruction(address int) string {
-	return "0" + fmt.Sprintf(addressTo15Bits, address)
+func (p *BinaryCode16BitsProvider) EncodeAInstruction(address int) (string, error) {
+	if err := Validate15BitAddress(address); err != nil {
+		return "", err
+	}
+	return "0" + fmt.Sprintf(addressTo15Bits, address), nil
 }
 
 func (p *BinaryCode16BitsProvider) EncodeCInstruction(dest dests.Dest, compute computes.Compute, jump jumps.Jump) string {

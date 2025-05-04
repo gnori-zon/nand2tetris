@@ -24,13 +24,13 @@ func (initializer *HackAssemblerElement16BitInitializer) Initialize(
 	if element.Type() == models.Label {
 		if label, ok := element.(models.HackAssemblerLabel); ok {
 			labelAddress := number - initializer.countProcessedLabels
-			initializer.countProcessedLabels++
 			if err := Validate15BitAddress(labelAddress); err != nil {
 				return err
 			}
 			if err := initializer.symbolsTable.Add(label.Value, labelAddress); err != nil {
 				return err
 			}
+			initializer.countProcessedLabels++
 		}
 	}
 	return nil
